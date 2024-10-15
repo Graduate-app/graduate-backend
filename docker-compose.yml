@@ -1,0 +1,26 @@
+version: '3.7'
+
+networks:
+  graduate:
+    name: graduate-network
+
+volumes:
+  app-db-data-graduate:
+    name: app-db-data-graduate
+
+services:
+  db:
+    image: postgres
+    container_name: graduate-postgres
+    hostname: postgres
+    restart: always
+    networks:
+      - graduate
+    volumes:
+     - app-db-data-graduate:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - ${POSTGRES_PORT}:5432
