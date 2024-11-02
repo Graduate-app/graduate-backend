@@ -26,7 +26,6 @@ export class GraduandController {
   @Get()
   async getByFilter(@Body() filter: Partial<Graduand>) {
     try {
-      filter.status = GraduandStatusEnum.applied;
       return await this.graduandService.getGraduands(filter);
     } catch (e) {
       return {
