@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
+  HttpStatus,
   Param,
   Post,
   Put,
@@ -28,10 +30,7 @@ export class GraduandController {
     try {
       return await this.graduandService.getGraduands(filter);
     } catch (e) {
-      return {
-        status: e.status,
-        message: e.message,
-      };
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -41,23 +40,25 @@ export class GraduandController {
     try {
       return await this.graduandService.getOneGraduand(id);
     } catch (e) {
-      return {
-        status: e.status,
-        message: e.message,
-      };
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
     }
   }
 
   @Post('/send')
-  async send(@Body() graduand: Graduand) {
+  async send(@Body() createGraduandInput: CreateGraduandInput) {
     try {
+      const graduand = createGraduandInput as Graduand;
       graduand.status = GraduandStatusEnum.pending;
+
+      if (createGraduandInput.profilePictureId) {
+        graduand.profilePicture = await this.profilePictureService.getOne(
+          createGraduandInput.profilePictureId,
+        );
+      }
+
       return await this.graduandService.createGraduand(graduand);
     } catch (e) {
-      return {
-        status: e.status,
-        message: e.message,
-      };
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -76,10 +77,7 @@ export class GraduandController {
 
       return await this.graduandService.createGraduand(graduand);
     } catch (e) {
-      return {
-        status: e.status,
-        message: e.message,
-      };
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -91,10 +89,7 @@ export class GraduandController {
         status: GraduandStatusEnum.applied,
       });
     } catch (e) {
-      return {
-        status: e.status,
-        message: e.message,
-      };
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -106,10 +101,7 @@ export class GraduandController {
         status: GraduandStatusEnum.rejected,
       });
     } catch (e) {
-      return {
-        status: e.status,
-        message: e.message,
-      };
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -135,10 +127,7 @@ export class GraduandController {
 
       return await this.graduandService.updateGraduand(id, graduand);
     } catch (e) {
-      return {
-        status: e.status,
-        message: e.message,
-      };
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -148,10 +137,7 @@ export class GraduandController {
     try {
       return await this.graduandService.deleteGraduand(id);
     } catch (e) {
-      return {
-        status: e.status,
-        message: e.message,
-      };
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
     }
   }
 }

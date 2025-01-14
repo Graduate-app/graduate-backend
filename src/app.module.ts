@@ -12,6 +12,8 @@ import { ProfilePictureService } from './graduand/services/profile-pictures.serv
 import { ProfilePicture } from './graduand/entities/profile-picture.entity';
 import { AuthModule } from './auth/admin.module';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { SeedModule } from './seeds/seed.module';
+import { CommandModule } from 'nestjs-command';
 
 @Module({
   imports: [
@@ -44,6 +46,8 @@ import { MailerModule } from '@nestjs-modules/mailer';
     ReunionModule,
     AdminModule,
     AuthModule,
+    SeedModule,
+    CommandModule,
   ],
   controllers: [AppController],
   providers: [AppService, ProfilePictureService],

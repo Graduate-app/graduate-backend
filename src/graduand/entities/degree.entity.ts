@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { DegreeEnum } from '../enums/degree.enum';
 import { Graduand } from './graduand.entity';
+import { MajorEnum } from '../enums/major.enum';
 
 @Entity()
 export class Degree {
@@ -16,6 +17,9 @@ export class Degree {
 
   @Column()
   degree: DegreeEnum;
+
+  @Column()
+  major: MajorEnum;
 
   @Column({ nullable: true })
   qualificationWork: string;

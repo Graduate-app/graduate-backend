@@ -2,6 +2,8 @@ import {
   Body,
   Controller,
   Get,
+  HttpException,
+  HttpStatus,
   Param,
   Post,
   Put,
@@ -29,10 +31,7 @@ export class ReunionController {
     try {
       return await this.reunionService.getAll(status);
     } catch (e) {
-      return {
-        status: e.status,
-        message: e.message,
-      };
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -42,10 +41,7 @@ export class ReunionController {
     try {
       return await this.reunionService.getOne(id);
     } catch (e) {
-      return {
-        status: e.status,
-        message: e.message,
-      };
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -70,10 +66,7 @@ export class ReunionController {
 
       return reunion;
     } catch (e) {
-      return {
-        status: e.status,
-        message: e.message,
-      };
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -100,10 +93,7 @@ export class ReunionController {
 
       return reunion;
     } catch (e) {
-      return {
-        status: e.status,
-        message: e.message,
-      };
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -115,10 +105,7 @@ export class ReunionController {
         status: ReunionStatus.closed,
       });
     } catch (e) {
-      return {
-        status: e.status,
-        message: e.message,
-      };
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -148,10 +135,7 @@ export class ReunionController {
 
       return reunion;
     } catch (e) {
-      return {
-        status: e.status,
-        message: e.message,
-      };
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
     }
   }
 }

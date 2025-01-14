@@ -17,6 +17,9 @@ export class GraduandService {
       return await this.graduandRepository.find({
         where: filter,
         relations: ['degree', 'profilePicture'],
+        order: {
+          createdAt: 'DESC',
+        },
       });
     } catch (error) {
       throw new Error(`Failed: ${error.message}`);
@@ -70,14 +73,69 @@ export class GraduandService {
 
   async updateGraduand(
     id: number,
-    graduand: Partial<Graduand>,
+    graduandData: Partial<Graduand>,
   ): Promise<Graduand> {
-    try {
-      await this.graduandRepository.update(id, graduand);
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-      return await this.graduandRepository.findOneBy({ id });
+    try {
+      // First, find the existing graduand
+      const existingGraduand = await queryRunner.manager.findOne(Graduand, {
+        where: { id },
+        relations: ['degree'],
+      });
+
+      if (!existingGraduand) {
+        throw new Error(`Graduand with ID ${id} not found`);
+      }
+
+      // Create a clean version of graduandData without the degree property
+      const { degree: degreesData, ...graduandDataWithoutDegree } =
+        graduandData;
+
+      // Update basic graduand information
+      await queryRunner.manager.update(Graduand, id, graduandDataWithoutDegree);
+
+      // Handle degrees if provided
+      if (degreesData && Array.isArray(degreesData)) {
+        // Remove old degrees
+        if (existingGraduand.degree && existingGraduand.degree.length > 0) {
+          await queryRunner.manager.delete(Degree, {
+            graduand: { id: existingGraduand.id },
+          });
+        }
+
+        // Create and save new degrees
+        const newDegrees = degreesData.map((degreeData) => {
+          const degree = new Degree();
+          // Copy all properties from degreeData except id and dates
+          Object.assign(degree, {
+            degree: degreeData.degree,
+            major: degreeData.major,
+            qualificationWork: degreeData.qualificationWork,
+            enrollmentYear: degreeData.enrollmentYear,
+            graduationYear: degreeData.graduationYear,
+            graduand: existingGraduand,
+          });
+          return degree;
+        });
+
+        await queryRunner.manager.save(Degree, newDegrees);
+      }
+
+      await queryRunner.commitTransaction();
+
+      // Fetch and return the updated graduand with relations
+      return await queryRunner.manager.findOne(Graduand, {
+        where: { id },
+        relations: ['degree', 'profilePicture'],
+      });
     } catch (error) {
-      throw new Error(`Failed to delete graduand: ${error.message}`);
+      await queryRunner.rollbackTransaction();
+      throw new Error(`Failed to update graduand: ${error.message}`);
+    } finally {
+      await queryRunner.release();
     }
   }
 

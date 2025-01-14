@@ -10,7 +10,6 @@ export default {
   password: process.env.POSTGRES_PASSWORD,
   db: process.env.POSTGRES_DB,
   serverPort: process.env.SERVER_PORT,
-  corsOrigin: process.env.CORS_ORIGIN,
   jwt: {
     accessSecret: process.env.ACCESS_TOKEN_SECRET,
     accessExpired: process.env.ACCESS_TOKEN_EXPIRATION,

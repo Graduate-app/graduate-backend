@@ -4,6 +4,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
+  HttpStatus,
   Param,
   Put,
   UseGuards,
@@ -26,10 +28,7 @@ export class AdminController {
     try {
       return new AdminResponse(await this.adminService.findById(admin.id));
     } catch (e) {
-      return {
-        status: e.status,
-        message: e.message,
-      };
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -41,10 +40,7 @@ export class AdminController {
       const admins = await this.adminService.findAllAdmins();
       return admins.map((admin) => new AdminResponse(admin));
     } catch (e) {
-      return {
-        status: e.status,
-        message: e.message,
-      };
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -58,10 +54,7 @@ export class AdminController {
       await this.adminService.changePassword(admin.id, newPassword);
       return true;
     } catch (e) {
-      return {
-        status: e.status,
-        message: e.message,
-      };
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -75,10 +68,7 @@ export class AdminController {
       await this.adminService.deleteAdmin(id);
       return true;
     } catch (e) {
-      return {
-        status: e.status,
-        message: e.message,
-      };
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
     }
   }
 }

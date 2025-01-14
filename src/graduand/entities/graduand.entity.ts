@@ -10,7 +10,6 @@ import {
 } from 'typeorm';
 import { GraduandStatusEnum } from '../enums/graduand-status.enum';
 import { HelpingOptionsEnum } from '../enums/helping-option.enum';
-import { MajorEnum } from '../enums/major.enum';
 import { Degree } from './degree.entity';
 import { ProfilePicture } from './profile-picture.entity';
 
@@ -45,9 +44,6 @@ export class Graduand {
 
   @OneToMany(() => Degree, (degree) => degree.graduand)
   degree: Degree[];
-
-  @Column()
-  major: MajorEnum;
 
   @Column()
   job: string;

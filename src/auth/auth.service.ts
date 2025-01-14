@@ -5,6 +5,7 @@ import config from 'src/config';
 import { SignDto } from './dto/sign.dto';
 import { Admin } from 'src/admin/entity/admin.entity';
 import { AdminService } from 'src/admin/admin.service';
+import { SignUpDto } from './dto/sign-up.dto';
 
 @Injectable()
 export class AuthService {
@@ -52,7 +53,7 @@ export class AuthService {
     return null;
   }
 
-  async signUp(userInput: SignDto) {
+  async signUp(userInput: SignUpDto) {
     const existUser = await this.adminService.findByEmail(userInput.email);
 
     if (existUser) {
@@ -61,7 +62,6 @@ export class AuthService {
 
     const user = await this.adminService.createAdmin({
       ...userInput,
-      superAdmin: false,
     });
 
     return await this.generateJwtCredentials(user);
